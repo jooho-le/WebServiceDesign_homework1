@@ -40,7 +40,7 @@ AI가 생성한 인증·화면 코드와 오류 수정안을 반영했고, 별�
 
 같은 날 새 로컬 Git clone에서 설치·키 생성·기본 DB 저장과 서버 재시작을 다시 확인했다. API 48개, 보안 10개, 프론트 10개와 실제 Chrome 17개 검사를 통과했으며 [실행 결과](evidence/runtime-20261028.txt)에 남겼다.
 
-최종 GitHub 업로드, 원격 저장소 clone, 교수자 접근 권한과 LMS 제출은 아직 확인 전이다.
+제출 저장소는 https://github.com/jooho-le/WebServiceDesign_homework1, 브랜치는 main이다. GitHub 업로드와 최종 원격 clone을 확인한 뒤, 저장소 URL과 최종 커밋 SHA를 LMS에 제출할 예정이다.
 
 ## 참고 자료
 
