@@ -1,0 +1,1 @@
+PASS actual cloned server restart: post, author and timestamps unchanged; test record deleted.

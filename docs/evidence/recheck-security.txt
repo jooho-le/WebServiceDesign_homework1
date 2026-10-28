@@ -1,0 +1,15 @@
+test_01_bad_server_configuration (__main__.SecurityChecks.test_01_bad_server_configuration) ... ok
+test_02_bearer_and_invalid_token (__main__.SecurityChecks.test_02_bearer_and_invalid_token) ... ok
+test_03_issued_claims (__main__.SecurityChecks.test_03_issued_claims) ... ok
+test_04_signed_invalid_claims (__main__.SecurityChecks.test_04_signed_invalid_claims) ... ok
+test_05_permission_order_and_unchanged_data (__main__.SecurityChecks.test_05_permission_order_and_unchanged_data) ... ok
+test_06_input_boundaries (__main__.SecurityChecks.test_06_input_boundaries) ... ok
+test_07_actual_server_restart (__main__.SecurityChecks.test_07_actual_server_restart) ... ok
+test_08_malformed_unicode_is_bad_input (__main__.SecurityChecks.test_08_malformed_unicode_is_bad_input) ... ok
+test_09_additional_claim_types_and_unsigned_tokens (__main__.SecurityChecks.test_09_additional_claim_types_and_unsigned_tokens) ... ok
+test_10_success_headers_and_empty_delete_body (__main__.SecurityChecks.test_10_success_headers_and_empty_delete_body) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.827s
+
+OK

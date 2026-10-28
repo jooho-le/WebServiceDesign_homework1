@@ -1,0 +1,10 @@
+PASS public page and login guidance
+PASS failed login shows an error
+PASS login, post creation, /me and actual Bearer headers
+PASS owner edit
+PASS invalid input keeps the draft
+PASS logout, other-user button visibility and direct API 403
+PASS owner deletion and 204 handling
+PASS refresh clears login, preserves posts and mobile has no horizontal overflow
+PASS missing record 404 clears detail and refreshes list
+All browser checks passed; no JavaScript page errors. Test posts removed.

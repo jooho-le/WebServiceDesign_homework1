@@ -1,0 +1,148 @@
+실행 재검사 · 2026-10-28 (Asia/Seoul)
+결과: 새 로컬 Git clone에서 설치·실행·필수 기능 재검사 통과. 제품 코드 수정 없음.
+복제 소스 54개. .env·DB·.venv·node_modules·dist 없이 시작하여 lock 파일로 설치함.
+setup_env.py로 새 키 생성, 기본 backend/data/board.sqlite 자동 생성 및 실제 프로세스 재시작 후 데이터 유지 확인.
+검사: 기본 API 40개 / 실제 만료 포함 API 48개 / 보안 10개 / 프론트 10개 시나리오 / Chrome 17개 / 빌드·pip check.
+검사 후 임시 글 전부 삭제, 서버 종료, 원래 프로젝트의 .env·DB 변경 없음.
+검증용 clone의 Git 상태 깨끗함. 최종 GitHub 제출 커밋·교수자 접근·LMS 제출은 별도 확인 필요.
+실행 주체: Codex. 학생 수동 테스트 결과는 포함하지 않음.
+
+Fresh-clone verification 2026-10-28T20:38:12+09:00
+Environment: macOS, Python 3.11.9, Node 20.19.5, built Vite frontend, Chrome + Playwright 1.64.1.
+Fresh installation passed: lock-based pip install, pip check, setup_env.py, npm ci, frontend 10 scenarios and vite build.
+test_01_bad_server_configuration (__main__.SecurityChecks.test_01_bad_server_configuration) ... ok
+test_02_bearer_and_invalid_token (__main__.SecurityChecks.test_02_bearer_and_invalid_token) ... ok
+test_03_issued_claims (__main__.SecurityChecks.test_03_issued_claims) ... ok
+test_04_signed_invalid_claims (__main__.SecurityChecks.test_04_signed_invalid_claims) ... ok
+test_05_permission_order_and_unchanged_data (__main__.SecurityChecks.test_05_permission_order_and_unchanged_data) ... ok
+test_06_input_boundaries (__main__.SecurityChecks.test_06_input_boundaries) ... ok
+test_07_actual_server_restart (__main__.SecurityChecks.test_07_actual_server_restart) ... ok
+test_08_malformed_unicode_is_bad_input (__main__.SecurityChecks.test_08_malformed_unicode_is_bad_input) ... ok
+test_09_additional_claim_types_and_unsigned_tokens (__main__.SecurityChecks.test_09_additional_claim_types_and_unsigned_tokens) ... ok
+test_10_success_headers_and_empty_delete_body (__main__.SecurityChecks.test_10_success_headers_and_empty_delete_body) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.834s
+
+OK
+Fresh local clone: default backend/data/board.sqlite and new key created by setup_env.py. Original workspace runtime files are not used.
+PASS startup: backend health HTTP 200; built frontend HTTP 200 at :4173; proxy to :8000.
+PASS health
+PASS public list
+PASS bad ID
+PASS missing ID
+PASS wrong password
+PASS unknown email
+PASS no token me
+PASS no token create
+PASS login alice@class.test
+PASS login bob@class.test
+PASS Alice me
+PASS Bob me
+PASS create post
+PASS public detail
+PASS no token PUT
+PASS Bob denied PUT
+PASS failed request leaves data unchanged
+PASS no token DELETE
+PASS Bob denied DELETE
+PASS failed request leaves data unchanged
+PASS reject authorId
+PASS reject userId
+PASS input validation
+PASS input validation
+PASS input validation
+PASS input validation
+PASS tampered GET /me
+PASS tampered POST /posts
+PASS tampered PUT /posts/1
+PASS tampered DELETE /posts/1
+PASS failed request leaves data unchanged
+PASS owner update
+PASS create post
+PASS Bob own update
+PASS missing protected PUT
+PASS missing protected DELETE
+PASS delete owned test post
+PASS deleted post missing
+PASS delete owned test post
+PASS deleted post missing
+All 40 checks passed (final). UI and restart tests must be performed separately.
+PASS provided API checks: 40 passed; test posts removed.
+PASS browser normal: public list and logged-out writing guidance render
+PASS browser normal: incorrect password: HTTP 401 and visible login error
+PASS browser normal: Alice login, real Bearer /me, create HTTP 201 + Location and owner buttons
+PASS browser normal: Alice owner update: HTTP 200, rendered update and original author/createdAt preserved
+PASS browser normal: Bob sees no Alice edit/delete buttons; direct PUT and DELETE return 403 and preserve full post
+PASS browser normal: Bob own create/update/delete, my-record filter, HTTP 204 and cleared detail without JSON parsing errors
+PASS browser normal: logout clears UI and next frontend Authorization header; /me without token returns 401
+PASS browser normal: refresh clears memory login but keeps public saved post; browser storage remains empty
+PASS browser normal: whitespace draft is blocked in the UI and kept for correction
+PASS browser normal: real HTTP 400 via test-only wire input: draft, login and original data preserved
+PASS browser normal: real HTTP 403 via test-only Bob header: login, editor draft and data preserved
+PASS browser normal: tampered JWT: actual HTTP 401 clears user, editor and owner buttons without changing data
+PASS browser normal: post deleted by another request: actual HTTP 404 clears detail and refreshes list
+PASS browser normal: 320/390/768px layouts stay usable; desktop screenshot and persistent test post saved
+All 14 browser checks passed (normal); no JavaScript page errors.
+PASS browser -> proxy -> API -> SQLite: stored row matches the full created/updated post.
+PASS browser restart: real server process restart: post, author, content and timestamps unchanged and UI loads data
+All 1 browser checks passed (restart); no JavaScript page errors.
+PASS real server process restart with default SQLite DB: full post and timestamps unchanged.
+PASS health
+PASS public list
+PASS bad ID
+PASS missing ID
+PASS wrong password
+PASS unknown email
+PASS no token me
+PASS no token create
+PASS login alice@class.test
+PASS login bob@class.test
+PASS Alice me
+PASS Bob me
+PASS create post
+PASS public detail
+PASS no token PUT
+PASS Bob denied PUT
+PASS failed request leaves data unchanged
+PASS no token DELETE
+PASS Bob denied DELETE
+PASS failed request leaves data unchanged
+PASS reject authorId
+PASS reject userId
+PASS input validation
+PASS input validation
+PASS input validation
+PASS input validation
+PASS tampered GET /me
+PASS tampered POST /posts
+PASS tampered PUT /posts/6
+PASS tampered DELETE /posts/6
+PASS failed request leaves data unchanged
+PASS owner update
+PASS create post
+PASS Bob own update
+PASS missing protected PUT
+PASS missing protected DELETE
+PASS login alice@class.test
+Waiting 4 seconds for expiration
+PASS expired GET /me
+PASS expired POST /posts
+PASS expired PUT /posts/6
+PASS expired DELETE /posts/6
+PASS failed request leaves data unchanged
+PASS login alice@class.test
+PASS login bob@class.test
+PASS delete owned test post
+PASS deleted post missing
+PASS delete owned test post
+PASS deleted post missing
+All 48 checks passed (final). UI and restart tests must be performed separately.
+PASS provided API checks with actual TTL=3 expiration: 48 passed.
+PASS browser expiry: real TTL=3 expiration: PUT returns 401 TOKEN_EXPIRED, clears login/editor/buttons and leaves data unchanged
+All 1 browser checks passed (expiry); no JavaScript page errors.
+PASS browser offline: backend stopped: real proxy 502 shows useful error and no JavaScript crash
+All 1 browser checks passed (offline); no JavaScript page errors.
+PASS cleanup: all temporary posts removed; final SQLite post count is 0.
+PASS development files unchanged: .env and development DB hashes match the baseline.
+ALL CHECKS PASSED. Detailed requests and screenshots are in the temporary verification directory.

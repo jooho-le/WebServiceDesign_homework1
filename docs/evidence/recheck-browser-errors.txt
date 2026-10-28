@@ -1,0 +1,6 @@
+PASS real HTTP 400 via invalid wire input: original data, typed draft and login preserved
+PASS real HTTP 403 via Bob token on Alice edit: original data, typed draft and login preserved
+PASS real HTTP 401 INVALID_TOKEN clears user, editor and owner buttons
+PASS after logout /me has no Authorization and returns HTTP 401 TOKEN_REQUIRED
+PASS responsive layouts at 320px, 390px and 768px have no horizontal overflow
+All additional browser checks passed; injected wire inputs/headers used only to exercise actual server errors.

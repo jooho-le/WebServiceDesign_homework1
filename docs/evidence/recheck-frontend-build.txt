@@ -1,0 +1,85 @@
+v20.19.5
+
+> jwt-board-react@1.0.0 test
+> node --test ../tools/check_frontend.mjs
+
+TAP version 13
+# Subtest: frontend authentication and response contract
+    # Subtest: public requests have no Authorization header
+    ok 1 - public requests have no Authorization header
+      ---
+      duration_ms: 15.320792
+      ...
+    # Subtest: login sends JSON and stores the returned session
+    ok 2 - login sends JSON and stores the returned session
+      ---
+      duration_ms: 0.593833
+      ...
+    # Subtest: protected requests send the actual Bearer header
+    ok 3 - protected requests send the actual Bearer header
+      ---
+      duration_ms: 0.149625
+      ...
+    # Subtest: 403 preserves the login session
+    ok 4 - 403 preserves the login session
+      ---
+      duration_ms: 0.343084
+      ...
+    # Subtest: 400 preserves the login session and exposes BAD_INPUT
+    ok 5 - 400 preserves the login session and exposes BAD_INPUT
+      ---
+      duration_ms: 0.152334
+      ...
+    # Subtest: 204 deletion does not parse a JSON body
+    ok 6 - 204 deletion does not parse a JSON body
+      ---
+      duration_ms: 0.07225
+      ...
+    # Subtest: all 401 variants clear token and user
+    ok 7 - all 401 variants clear token and user
+      ---
+      duration_ms: 1.283334
+      ...
+    # Subtest: logout removes Authorization from subsequent requests
+    ok 8 - logout removes Authorization from subsequent requests
+      ---
+      duration_ms: 0.313709
+      ...
+    # Subtest: non-JSON upstream errors show a useful message
+    ok 9 - non-JSON upstream errors show a useful message
+      ---
+      duration_ms: 0.493542
+      ...
+    # Subtest: network failures show a connection message
+    ok 10 - network failures show a connection message
+      ---
+      duration_ms: 0.143292
+      ...
+    1..10
+ok 1 - frontend authentication and response contract
+  ---
+  duration_ms: 19.932375
+  ...
+1..1
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 61.262042
+
+> jwt-board-react@1.0.0 build
+> vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 16 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.54 kB │ gzip:  0.39 kB
+dist/assets/index-CZJc1iHA.css    7.43 kB │ gzip:  2.36 kB
+dist/assets/index-D6m0_R8S.js   231.90 kB │ gzip: 73.02 kB
+
+✓ built in 341ms

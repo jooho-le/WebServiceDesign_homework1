@@ -1,0 +1,1 @@
+PASS actual 3-second token expiration: HTTP 401 TOKEN_EXPIRED, Bearer challenge, login cleared, login guidance displayed.

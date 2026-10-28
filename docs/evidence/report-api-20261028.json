@@ -1,0 +1,1546 @@
+{
+  "date": "2026-10-28",
+  "timezone": "Asia/Seoul",
+  "executor": "Codex",
+  "command": "backend/.venv/bin/python tools/capture_report_api.py",
+  "underlying_check": "check_api.py --mode final --expiry",
+  "TTL_seconds": 3,
+  "checks": 48,
+  "passed": 48,
+  "isolation": "temporary SQLite DB, fresh secret, loopback ephemeral port",
+  "note": "check_api.py on disk was not modified; two in-memory recording hooks added. JSON credentials and tokens redacted.",
+  "requests": [
+    {
+      "id": "E01",
+      "request": {
+        "method": "GET",
+        "path": "/api/health",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": null
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 33,
+        "body": {
+          "status": "ok",
+          "stack": "fastapi"
+        }
+      },
+      "label": "health",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E02",
+      "request": {
+        "method": "GET",
+        "path": "/api/posts",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": null
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 2,
+        "body": []
+      },
+      "label": "public list",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E03",
+      "request": {
+        "method": "GET",
+        "path": "/api/posts/abc",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": null
+      },
+      "actual": {
+        "status": 400,
+        "code": "BAD_INPUT",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 69,
+        "body": {
+          "code": "BAD_INPUT",
+          "message": "ID는 양의 정수여야 합니다."
+        }
+      },
+      "label": "bad ID",
+      "expected": {
+        "status": 400,
+        "code": "BAD_INPUT"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E04",
+      "request": {
+        "method": "GET",
+        "path": "/api/posts/9007199254740991",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": null
+      },
+      "actual": {
+        "status": 404,
+        "code": "NOT_FOUND",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 59,
+        "body": {
+          "code": "NOT_FOUND",
+          "message": "게시글이 없습니다."
+        }
+      },
+      "label": "missing ID",
+      "expected": {
+        "status": 404,
+        "code": "NOT_FOUND"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E05",
+      "request": {
+        "method": "POST",
+        "path": "/api/auth/login",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": {
+          "email": "alice@class.test",
+          "password": "<redacted>"
+        }
+      },
+      "actual": {
+        "status": 401,
+        "code": "INVALID_CREDENTIALS",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 92,
+        "body": {
+          "code": "INVALID_CREDENTIALS",
+          "message": "이메일 또는 비밀번호를 확인하세요."
+        }
+      },
+      "label": "wrong password",
+      "expected": {
+        "status": 401,
+        "code": "INVALID_CREDENTIALS"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E06",
+      "request": {
+        "method": "POST",
+        "path": "/api/auth/login",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": {
+          "email": "nobody@class.test",
+          "password": "<redacted>"
+        }
+      },
+      "actual": {
+        "status": 401,
+        "code": "INVALID_CREDENTIALS",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 92,
+        "body": {
+          "code": "INVALID_CREDENTIALS",
+          "message": "이메일 또는 비밀번호를 확인하세요."
+        }
+      },
+      "label": "unknown email",
+      "expected": {
+        "status": 401,
+        "code": "INVALID_CREDENTIALS"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E07",
+      "request": {
+        "method": "GET",
+        "path": "/api/me",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": null
+      },
+      "actual": {
+        "status": 401,
+        "code": "TOKEN_REQUIRED",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 67,
+        "body": {
+          "code": "TOKEN_REQUIRED",
+          "message": "로그인이 필요합니다."
+        }
+      },
+      "label": "no token me",
+      "expected": {
+        "status": 401,
+        "code": "TOKEN_REQUIRED"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E08",
+      "request": {
+        "method": "POST",
+        "path": "/api/posts",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": {
+          "title": "무토큰",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 401,
+        "code": "TOKEN_REQUIRED",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 67,
+        "body": {
+          "code": "TOKEN_REQUIRED",
+          "message": "로그인이 필요합니다."
+        }
+      },
+      "label": "no token create",
+      "expected": {
+        "status": 401,
+        "code": "TOKEN_REQUIRED"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E09",
+      "request": {
+        "method": "POST",
+        "path": "/api/auth/login",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": {
+          "email": "alice@class.test",
+          "password": "<redacted>"
+        }
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 266,
+        "body": {
+          "accessToken": "<redacted>",
+          "expiresIn": 3,
+          "user": {
+            "id": 1,
+            "name": "Alice",
+            "email": "alice@class.test"
+          }
+        }
+      },
+      "label": "login alice@class.test",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E10",
+      "request": {
+        "method": "POST",
+        "path": "/api/auth/login",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": {
+          "email": "bob@class.test",
+          "password": "<redacted>"
+        }
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 262,
+        "body": {
+          "accessToken": "<redacted>",
+          "expiresIn": 3,
+          "user": {
+            "id": 2,
+            "name": "Bob",
+            "email": "bob@class.test"
+          }
+        }
+      },
+      "label": "login bob@class.test",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E11",
+      "request": {
+        "method": "GET",
+        "path": "/api/me",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": null
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 50,
+        "body": {
+          "id": 1,
+          "name": "Alice",
+          "email": "alice@class.test"
+        }
+      },
+      "label": "Alice me",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E12",
+      "request": {
+        "method": "GET",
+        "path": "/api/me",
+        "user_condition": "Bob",
+        "authorization": "Bearer <redacted>",
+        "body": null
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 46,
+        "body": {
+          "id": 2,
+          "name": "Bob",
+          "email": "bob@class.test"
+        }
+      },
+      "label": "Bob me",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E13",
+      "request": {
+        "method": "POST",
+        "path": "/api/posts",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "API 검사 임시 글",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 201,
+        "code": null,
+        "headers": {
+          "Location": "/api/posts/1",
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 241,
+        "body": {
+          "id": 1,
+          "title": "API 검사 임시 글",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다.",
+          "authorId": 1,
+          "authorName": "Alice",
+          "createdAt": "2026-10-28T05:43:48.595296+00:00",
+          "updatedAt": "2026-10-28T05:43:48.595296+00:00"
+        }
+      },
+      "label": "create post",
+      "expected": {
+        "status": 201,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E14",
+      "request": {
+        "method": "GET",
+        "path": "/api/posts/1",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": null
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 241,
+        "body": {
+          "id": 1,
+          "title": "API 검사 임시 글",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다.",
+          "authorId": 1,
+          "authorName": "Alice",
+          "createdAt": "2026-10-28T05:43:48.595296+00:00",
+          "updatedAt": "2026-10-28T05:43:48.595296+00:00"
+        }
+      },
+      "label": "public detail",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E15",
+      "request": {
+        "method": "PUT",
+        "path": "/api/posts/1",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": {
+          "title": "타인 수정 시도",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 401,
+        "code": "TOKEN_REQUIRED",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 67,
+        "body": {
+          "code": "TOKEN_REQUIRED",
+          "message": "로그인이 필요합니다."
+        }
+      },
+      "label": "no token PUT",
+      "expected": {
+        "status": 401,
+        "code": "TOKEN_REQUIRED"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E16",
+      "request": {
+        "method": "PUT",
+        "path": "/api/posts/1",
+        "user_condition": "Bob",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "타인 수정 시도",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 403,
+        "code": "FORBIDDEN",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 95,
+        "body": {
+          "code": "FORBIDDEN",
+          "message": "본인이 작성한 글만 수정·삭제할 수 있습니다."
+        }
+      },
+      "label": "Bob denied PUT",
+      "expected": {
+        "status": 403,
+        "code": "FORBIDDEN"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E17",
+      "request": {
+        "method": "GET",
+        "path": "/api/posts/1",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": null
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 241,
+        "body": {
+          "id": 1,
+          "title": "API 검사 임시 글",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다.",
+          "authorId": 1,
+          "authorName": "Alice",
+          "createdAt": "2026-10-28T05:43:48.595296+00:00",
+          "updatedAt": "2026-10-28T05:43:48.595296+00:00"
+        }
+      },
+      "label": "failed request leaves data unchanged",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E18",
+      "request": {
+        "method": "DELETE",
+        "path": "/api/posts/1",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": null
+      },
+      "actual": {
+        "status": 401,
+        "code": "TOKEN_REQUIRED",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 67,
+        "body": {
+          "code": "TOKEN_REQUIRED",
+          "message": "로그인이 필요합니다."
+        }
+      },
+      "label": "no token DELETE",
+      "expected": {
+        "status": 401,
+        "code": "TOKEN_REQUIRED"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E19",
+      "request": {
+        "method": "DELETE",
+        "path": "/api/posts/1",
+        "user_condition": "Bob",
+        "authorization": "Bearer <redacted>",
+        "body": null
+      },
+      "actual": {
+        "status": 403,
+        "code": "FORBIDDEN",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 95,
+        "body": {
+          "code": "FORBIDDEN",
+          "message": "본인이 작성한 글만 수정·삭제할 수 있습니다."
+        }
+      },
+      "label": "Bob denied DELETE",
+      "expected": {
+        "status": 403,
+        "code": "FORBIDDEN"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E20",
+      "request": {
+        "method": "GET",
+        "path": "/api/posts/1",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": null
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 241,
+        "body": {
+          "id": 1,
+          "title": "API 검사 임시 글",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다.",
+          "authorId": 1,
+          "authorName": "Alice",
+          "createdAt": "2026-10-28T05:43:48.595296+00:00",
+          "updatedAt": "2026-10-28T05:43:48.595296+00:00"
+        }
+      },
+      "label": "failed request leaves data unchanged",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E21",
+      "request": {
+        "method": "POST",
+        "path": "/api/posts",
+        "user_condition": "Bob",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "위조",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다.",
+          "authorId": 1
+        }
+      },
+      "actual": {
+        "status": 400,
+        "code": "BAD_INPUT",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 71,
+        "body": {
+          "code": "BAD_INPUT",
+          "message": "허용된 JSON 필드만 보내세요."
+        }
+      },
+      "label": "reject authorId",
+      "expected": {
+        "status": 400,
+        "code": "BAD_INPUT"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E22",
+      "request": {
+        "method": "POST",
+        "path": "/api/posts",
+        "user_condition": "Bob",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "위조",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다.",
+          "userId": 1
+        }
+      },
+      "actual": {
+        "status": 400,
+        "code": "BAD_INPUT",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 71,
+        "body": {
+          "code": "BAD_INPUT",
+          "message": "허용된 JSON 필드만 보내세요."
+        }
+      },
+      "label": "reject userId",
+      "expected": {
+        "status": 400,
+        "code": "BAD_INPUT"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E23",
+      "request": {
+        "method": "POST",
+        "path": "/api/posts",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": " ",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 400,
+        "code": "BAD_INPUT",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 65,
+        "body": {
+          "code": "BAD_INPUT",
+          "message": "title 입력을 확인하세요."
+        }
+      },
+      "label": "input validation",
+      "expected": {
+        "status": 400,
+        "code": "BAD_INPUT"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E24",
+      "request": {
+        "method": "POST",
+        "path": "/api/posts",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "제목",
+          "content": " "
+        }
+      },
+      "actual": {
+        "status": 400,
+        "code": "BAD_INPUT",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 67,
+        "body": {
+          "code": "BAD_INPUT",
+          "message": "content 입력을 확인하세요."
+        }
+      },
+      "label": "input validation",
+      "expected": {
+        "status": 400,
+        "code": "BAD_INPUT"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E25",
+      "request": {
+        "method": "POST",
+        "path": "/api/posts",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 400,
+        "code": "BAD_INPUT",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 65,
+        "body": {
+          "code": "BAD_INPUT",
+          "message": "title 입력을 확인하세요."
+        }
+      },
+      "label": "input validation",
+      "expected": {
+        "status": 400,
+        "code": "BAD_INPUT"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E26",
+      "request": {
+        "method": "POST",
+        "path": "/api/posts",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "제목",
+          "content": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        }
+      },
+      "actual": {
+        "status": 400,
+        "code": "BAD_INPUT",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 67,
+        "body": {
+          "code": "BAD_INPUT",
+          "message": "content 입력을 확인하세요."
+        }
+      },
+      "label": "input validation",
+      "expected": {
+        "status": 400,
+        "code": "BAD_INPUT"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E27",
+      "request": {
+        "method": "GET",
+        "path": "/api/me",
+        "user_condition": "변조된 토큰",
+        "authorization": "Bearer <redacted>",
+        "body": null
+      },
+      "actual": {
+        "status": 401,
+        "code": "INVALID_TOKEN",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 111,
+        "body": {
+          "code": "INVALID_TOKEN",
+          "message": "로그인 정보를 확인할 수 없습니다. 다시 로그인하세요."
+        }
+      },
+      "label": "tampered GET /me",
+      "expected": {
+        "status": 401,
+        "code": "INVALID_TOKEN"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E28",
+      "request": {
+        "method": "POST",
+        "path": "/api/posts",
+        "user_condition": "변조된 토큰",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "변조",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 401,
+        "code": "INVALID_TOKEN",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 111,
+        "body": {
+          "code": "INVALID_TOKEN",
+          "message": "로그인 정보를 확인할 수 없습니다. 다시 로그인하세요."
+        }
+      },
+      "label": "tampered POST /posts",
+      "expected": {
+        "status": 401,
+        "code": "INVALID_TOKEN"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E29",
+      "request": {
+        "method": "PUT",
+        "path": "/api/posts/1",
+        "user_condition": "변조된 토큰",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "변조",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 401,
+        "code": "INVALID_TOKEN",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 111,
+        "body": {
+          "code": "INVALID_TOKEN",
+          "message": "로그인 정보를 확인할 수 없습니다. 다시 로그인하세요."
+        }
+      },
+      "label": "tampered PUT /posts/1",
+      "expected": {
+        "status": 401,
+        "code": "INVALID_TOKEN"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E30",
+      "request": {
+        "method": "DELETE",
+        "path": "/api/posts/1",
+        "user_condition": "변조된 토큰",
+        "authorization": "Bearer <redacted>",
+        "body": null
+      },
+      "actual": {
+        "status": 401,
+        "code": "INVALID_TOKEN",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 111,
+        "body": {
+          "code": "INVALID_TOKEN",
+          "message": "로그인 정보를 확인할 수 없습니다. 다시 로그인하세요."
+        }
+      },
+      "label": "tampered DELETE /posts/1",
+      "expected": {
+        "status": 401,
+        "code": "INVALID_TOKEN"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E31",
+      "request": {
+        "method": "GET",
+        "path": "/api/posts/1",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": null
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 241,
+        "body": {
+          "id": 1,
+          "title": "API 검사 임시 글",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다.",
+          "authorId": 1,
+          "authorName": "Alice",
+          "createdAt": "2026-10-28T05:43:48.595296+00:00",
+          "updatedAt": "2026-10-28T05:43:48.595296+00:00"
+        }
+      },
+      "label": "failed request leaves data unchanged",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E32",
+      "request": {
+        "method": "PUT",
+        "path": "/api/posts/1",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "본인 수정 완료",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 240,
+        "body": {
+          "id": 1,
+          "title": "본인 수정 완료",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다.",
+          "authorId": 1,
+          "authorName": "Alice",
+          "createdAt": "2026-10-28T05:43:48.595296+00:00",
+          "updatedAt": "2026-10-28T05:43:48.605945+00:00"
+        }
+      },
+      "label": "owner update",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E33",
+      "request": {
+        "method": "POST",
+        "path": "/api/posts",
+        "user_condition": "Bob",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "API 검사 임시 글",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 201,
+        "code": null,
+        "headers": {
+          "Location": "/api/posts/2",
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 239,
+        "body": {
+          "id": 2,
+          "title": "API 검사 임시 글",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다.",
+          "authorId": 2,
+          "authorName": "Bob",
+          "createdAt": "2026-10-28T05:43:48.607058+00:00",
+          "updatedAt": "2026-10-28T05:43:48.607058+00:00"
+        }
+      },
+      "label": "create post",
+      "expected": {
+        "status": 201,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E34",
+      "request": {
+        "method": "PUT",
+        "path": "/api/posts/2",
+        "user_condition": "Bob",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "Bob 수정",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 228,
+        "body": {
+          "id": 2,
+          "title": "Bob 수정",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다.",
+          "authorId": 2,
+          "authorName": "Bob",
+          "createdAt": "2026-10-28T05:43:48.607058+00:00",
+          "updatedAt": "2026-10-28T05:43:48.608197+00:00"
+        }
+      },
+      "label": "Bob own update",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E35",
+      "request": {
+        "method": "PUT",
+        "path": "/api/posts/9007199254740991",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "없음",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 404,
+        "code": "NOT_FOUND",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 59,
+        "body": {
+          "code": "NOT_FOUND",
+          "message": "게시글이 없습니다."
+        }
+      },
+      "label": "missing protected PUT",
+      "expected": {
+        "status": 404,
+        "code": "NOT_FOUND"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E36",
+      "request": {
+        "method": "DELETE",
+        "path": "/api/posts/9007199254740991",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": null
+      },
+      "actual": {
+        "status": 404,
+        "code": "NOT_FOUND",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 59,
+        "body": {
+          "code": "NOT_FOUND",
+          "message": "게시글이 없습니다."
+        }
+      },
+      "label": "missing protected DELETE",
+      "expected": {
+        "status": 404,
+        "code": "NOT_FOUND"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E37",
+      "request": {
+        "method": "POST",
+        "path": "/api/auth/login",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": {
+          "email": "alice@class.test",
+          "password": "<redacted>"
+        }
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 266,
+        "body": {
+          "accessToken": "<redacted>",
+          "expiresIn": 3,
+          "user": {
+            "id": 1,
+            "name": "Alice",
+            "email": "alice@class.test"
+          }
+        }
+      },
+      "label": "login alice@class.test",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E38",
+      "request": {
+        "method": "GET",
+        "path": "/api/me",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": null
+      },
+      "actual": {
+        "status": 401,
+        "code": "TOKEN_EXPIRED",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 106,
+        "body": {
+          "code": "TOKEN_EXPIRED",
+          "message": "로그인 시간이 만료되었습니다. 다시 로그인하세요."
+        }
+      },
+      "label": "expired GET /me",
+      "expected": {
+        "status": 401,
+        "code": "TOKEN_EXPIRED"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E39",
+      "request": {
+        "method": "POST",
+        "path": "/api/posts",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "만료",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 401,
+        "code": "TOKEN_EXPIRED",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 106,
+        "body": {
+          "code": "TOKEN_EXPIRED",
+          "message": "로그인 시간이 만료되었습니다. 다시 로그인하세요."
+        }
+      },
+      "label": "expired POST /posts",
+      "expected": {
+        "status": 401,
+        "code": "TOKEN_EXPIRED"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E40",
+      "request": {
+        "method": "PUT",
+        "path": "/api/posts/1",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": {
+          "title": "만료",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다."
+        }
+      },
+      "actual": {
+        "status": 401,
+        "code": "TOKEN_EXPIRED",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 106,
+        "body": {
+          "code": "TOKEN_EXPIRED",
+          "message": "로그인 시간이 만료되었습니다. 다시 로그인하세요."
+        }
+      },
+      "label": "expired PUT /posts/1",
+      "expected": {
+        "status": 401,
+        "code": "TOKEN_EXPIRED"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E41",
+      "request": {
+        "method": "DELETE",
+        "path": "/api/posts/1",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": null
+      },
+      "actual": {
+        "status": 401,
+        "code": "TOKEN_EXPIRED",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": "Bearer"
+        },
+        "body_bytes": 106,
+        "body": {
+          "code": "TOKEN_EXPIRED",
+          "message": "로그인 시간이 만료되었습니다. 다시 로그인하세요."
+        }
+      },
+      "label": "expired DELETE /posts/1",
+      "expected": {
+        "status": 401,
+        "code": "TOKEN_EXPIRED"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E42",
+      "request": {
+        "method": "GET",
+        "path": "/api/posts/1",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": null
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 240,
+        "body": {
+          "id": 1,
+          "title": "본인 수정 완료",
+          "content": "공통 API 검사에서 생성한 임시 게시글입니다.",
+          "authorId": 1,
+          "authorName": "Alice",
+          "createdAt": "2026-10-28T05:43:48.595296+00:00",
+          "updatedAt": "2026-10-28T05:43:48.605945+00:00"
+        }
+      },
+      "label": "failed request leaves data unchanged",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E43",
+      "request": {
+        "method": "POST",
+        "path": "/api/auth/login",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": {
+          "email": "alice@class.test",
+          "password": "<redacted>"
+        }
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 266,
+        "body": {
+          "accessToken": "<redacted>",
+          "expiresIn": 3,
+          "user": {
+            "id": 1,
+            "name": "Alice",
+            "email": "alice@class.test"
+          }
+        }
+      },
+      "label": "login alice@class.test",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E44",
+      "request": {
+        "method": "POST",
+        "path": "/api/auth/login",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": {
+          "email": "bob@class.test",
+          "password": "<redacted>"
+        }
+      },
+      "actual": {
+        "status": 200,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 262,
+        "body": {
+          "accessToken": "<redacted>",
+          "expiresIn": 3,
+          "user": {
+            "id": 2,
+            "name": "Bob",
+            "email": "bob@class.test"
+          }
+        }
+      },
+      "label": "login bob@class.test",
+      "expected": {
+        "status": 200,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E45",
+      "request": {
+        "method": "DELETE",
+        "path": "/api/posts/1",
+        "user_condition": "Alice",
+        "authorization": "Bearer <redacted>",
+        "body": null
+      },
+      "actual": {
+        "status": 204,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 0,
+        "body": null
+      },
+      "label": "delete owned test post",
+      "expected": {
+        "status": 204,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E46",
+      "request": {
+        "method": "GET",
+        "path": "/api/posts/1",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": null
+      },
+      "actual": {
+        "status": 404,
+        "code": "NOT_FOUND",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 59,
+        "body": {
+          "code": "NOT_FOUND",
+          "message": "게시글이 없습니다."
+        }
+      },
+      "label": "deleted post missing",
+      "expected": {
+        "status": 404,
+        "code": "NOT_FOUND"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E47",
+      "request": {
+        "method": "DELETE",
+        "path": "/api/posts/2",
+        "user_condition": "Bob",
+        "authorization": "Bearer <redacted>",
+        "body": null
+      },
+      "actual": {
+        "status": 204,
+        "code": null,
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 0,
+        "body": null
+      },
+      "label": "delete owned test post",
+      "expected": {
+        "status": 204,
+        "code": null
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E48",
+      "request": {
+        "method": "GET",
+        "path": "/api/posts/2",
+        "user_condition": "무토큰",
+        "authorization": null,
+        "body": null
+      },
+      "actual": {
+        "status": 404,
+        "code": "NOT_FOUND",
+        "headers": {
+          "Location": null,
+          "WWW-Authenticate": null
+        },
+        "body_bytes": 59,
+        "body": {
+          "code": "NOT_FOUND",
+          "message": "게시글이 없습니다."
+        }
+      },
+      "label": "deleted post missing",
+      "expected": {
+        "status": 404,
+        "code": "NOT_FOUND"
+      },
+      "verdict": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+PASS actual backend process stopped: Vite proxy HTTP 502 shows a readable server error, no unhandled JavaScript page error.
