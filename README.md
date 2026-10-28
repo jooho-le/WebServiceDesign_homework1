@@ -158,10 +158,3 @@ backend/.venv/bin/python tools/check_api.py --mode final --expiry
 ```sh
 git rev-parse HEAD
 ```
-
-## 제출 전 남은 일
-
-- 실제 코드를 읽고 로그인·토큰 전송·검증·작성자 권한 흐름을 설명하기
-- 저장소 URL·최종 커밋 SHA를 LMS에 제출하기
-
-공개 저장소이므로 교수자가 별도 초대 없이 코드와 보고서를 볼 수 있습니다. 10월 28일 GitHub에서 새로 clone한 뒤 의존성 설치·키 생성·빌드·API·실제 화면과 DB 재시작을 확인했습니다. [실행 재검사](docs/evidence/runtime-20261028.txt)에 결과를 남겼습니다. 검증 기록은 Codex를 이용한 자동 검사 결과이며, 별도 수동 테스트는 남아 있습니다.
