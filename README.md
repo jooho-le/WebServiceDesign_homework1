@@ -6,7 +6,7 @@
 
 - 작성자·학번: 이주호 · 202116786
 - 저장소: [jooho-le/WebServiceDesign_homework1](https://github.com/jooho-le/WebServiceDesign_homework1) · 브랜치: `main`
-- 현재 단계: 필수 기능 구현·검증·보고서 작성 완료. GitHub 업로드와 원격 clone 확인을 진행하며, LMS는 본인이 제출합니다.
+- 현재 단계: 필수 기능·보고서·GitHub 업로드·원격 clone 설치와 실행 확인 완료. LMS는 본인이 제출합니다.
 - 구현 보고서: [PDF](docs/report.pdf) · [수정 가능한 Markdown 원본](docs/report.md)
 - 요청별 HTTP 증거: [2026-10-28 실제 요청·응답](docs/evidence/report-api-20261028.md)
 - 실행 재검사: [2026-10-28 API·브라우저·재시작 결과](docs/evidence/runtime-20261028.txt)
@@ -162,7 +162,6 @@ git rev-parse HEAD
 ## 제출 전 남은 일
 
 - 실제 코드를 읽고 로그인·토큰 전송·검증·작성자 권한 흐름을 설명하기
-- 업로드한 최종 커밋을 새 폴더에 clone해 설치·실행 확인하기
-- 저장소와 보고서의 공개 접근을 확인하고 URL·최종 커밋 SHA를 LMS에 제출하기
+- 저장소 URL·최종 커밋 SHA를 LMS에 제출하기
 
-10월 28일 새 로컬 Git clone의 설치·실행 결과는 [실행 재검사](docs/evidence/runtime-20261028.txt)에 있습니다. 검증 기록은 Codex를 이용한 자동 검사 결과이며, 별도 수동 테스트는 남아 있습니다.
+공개 저장소이므로 교수자가 별도 초대 없이 코드와 보고서를 볼 수 있습니다. 10월 28일 GitHub에서 새로 clone한 뒤 의존성 설치·키 생성·빌드·API·실제 화면과 DB 재시작을 확인했습니다. [실행 재검사](docs/evidence/runtime-20261028.txt)에 결과를 남겼습니다. 검증 기록은 Codex를 이용한 자동 검사 결과이며, 별도 수동 테스트는 남아 있습니다.

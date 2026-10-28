@@ -4,7 +4,7 @@
 setup_env.py로 새 키 생성, 기본 backend/data/board.sqlite 자동 생성 및 실제 프로세스 재시작 후 데이터 유지 확인.
 검사: 기본 API 40개 / 실제 만료 포함 API 48개 / 보안 10개 / 프론트 10개 시나리오 / Chrome 17개 / 빌드·pip check.
 검사 후 임시 글 전부 삭제, 서버 종료, 원래 프로젝트의 .env·DB 변경 없음.
-검증용 clone의 Git 상태 깨끗함. 최종 GitHub 제출 커밋·교수자 접근·LMS 제출은 별도 확인 필요.
+검증용 clone의 Git 상태 깨끗함. 이후 GitHub 공개 업로드와 원격 clone 실행도 확인했으며, LMS 제출은 본인 진행.
 실행 주체: Codex. 학생 수동 테스트 결과는 포함하지 않음.
 
 Fresh-clone verification 2026-10-28T20:38:12+09:00
@@ -146,3 +146,85 @@ All 1 browser checks passed (offline); no JavaScript page errors.
 PASS cleanup: all temporary posts removed; final SQLite post count is 0.
 PASS development files unchanged: .env and development DB hashes match the baseline.
 ALL CHECKS PASSED. Detailed requests and screenshots are in the temporary verification directory.
+
+GitHub 원격 clone 추가 검증 · 2026-10-28
+저장소: https://github.com/jooho-le/WebServiceDesign_homework1.git
+검증한 업로드 커밋: e69b4d917723919a14879e49882d9be72b651686
+구현 코드 23개 파일의 해시가 이전 검증본과 일치함. 이 커밋 이후에는 제출 정보·보고서·증거만 갱신함.
+
+GitHub remote-clone verification 2026-10-28T21:04:58+09:00
+RUN git clone https://github.com/jooho-le/WebServiceDesign_homework1.git /private/tmp/wsd1-github-final-6e9ccl0w/WebServiceDesign_homework1
+RUN git rev-parse HEAD
+RUN git ls-files
+RUN /Users/leejooho/Desktop/wsd1/JWT-Assignment/backend/.venv/bin/python -m venv /private/tmp/wsd1-github-final-6e9ccl0w/WebServiceDesign_homework1/backend/.venv
+RUN /private/tmp/wsd1-github-final-6e9ccl0w/WebServiceDesign_homework1/backend/.venv/bin/python -m pip install --disable-pip-version-check -r backend/requirements.lock
+RUN /private/tmp/wsd1-github-final-6e9ccl0w/WebServiceDesign_homework1/backend/.venv/bin/python -m pip check
+No broken requirements found.
+RUN /private/tmp/wsd1-github-final-6e9ccl0w/WebServiceDesign_homework1/backend/.venv/bin/python tools/setup_env.py
+RUN npm ci --no-audit --no-fund
+RUN npm test
+RUN npm run build
+PASS GitHub clone: 54 tracked files, no runtime folders/keys/DB, clean installation and build.
+RUN /private/tmp/wsd1-github-final-6e9ccl0w/WebServiceDesign_homework1/backend/.venv/bin/python tools/check_api.py --mode final
+PASS health
+PASS public list
+PASS bad ID
+PASS missing ID
+PASS wrong password
+PASS unknown email
+PASS no token me
+PASS no token create
+PASS login alice@class.test
+PASS login bob@class.test
+PASS Alice me
+PASS Bob me
+PASS create post
+PASS public detail
+PASS no token PUT
+PASS Bob denied PUT
+PASS failed request leaves data unchanged
+PASS no token DELETE
+PASS Bob denied DELETE
+PASS failed request leaves data unchanged
+PASS reject authorId
+PASS reject userId
+PASS input validation
+PASS input validation
+PASS input validation
+PASS input validation
+PASS tampered GET /me
+PASS tampered POST /posts
+PASS tampered PUT /posts/1
+PASS tampered DELETE /posts/1
+PASS failed request leaves data unchanged
+PASS owner update
+PASS create post
+PASS Bob own update
+PASS missing protected PUT
+PASS missing protected DELETE
+PASS delete owned test post
+PASS deleted post missing
+PASS delete owned test post
+PASS deleted post missing
+All 40 checks passed (final). UI and restart tests must be performed separately.
+RUN node /private/tmp/wsd1-github-final-6e9ccl0w/remote-browser-check.mjs normal
+PASS browser normal: public list and logged-out writing guidance render
+PASS browser normal: incorrect password: HTTP 401 and visible login error
+PASS browser normal: Alice login, real Bearer /me, create HTTP 201 + Location and owner buttons
+PASS browser normal: Alice owner update: HTTP 200, rendered update and original author/createdAt preserved
+PASS browser normal: Bob sees no Alice edit/delete buttons; direct PUT and DELETE return 403 and preserve full post
+PASS browser normal: Bob own create/update/delete, my-record filter, HTTP 204 and cleared detail without JSON parsing errors
+PASS browser normal: logout clears UI and next frontend Authorization header; /me without token returns 401
+PASS browser normal: refresh clears memory login but keeps public saved post; browser storage remains empty
+PASS browser normal: whitespace draft is blocked in the UI and kept for correction
+PASS browser normal: real HTTP 400 via test-only wire input: draft, login and original data preserved
+PASS browser normal: real HTTP 403 via test-only Bob header: login, editor draft and data preserved
+PASS browser normal: tampered JWT: actual HTTP 401 clears user, editor and owner buttons without changing data
+PASS browser normal: post deleted by another request: actual HTTP 404 clears detail and refreshes list
+PASS browser normal: 320/390/768px layouts stay usable; desktop screenshot and persistent test post saved
+All 14 browser checks passed (normal); no JavaScript page errors.
+RUN node /private/tmp/wsd1-github-final-6e9ccl0w/remote-browser-check.mjs restart
+PASS browser restart: real server process restart: post, author, content and timestamps unchanged and UI loads data
+All 1 browser checks passed (restart); no JavaScript page errors.
+RUN git status --porcelain
+PASS final remote clone: provided API 40, frontend 10 scenarios, actual Chrome 14 + restart 1; no application code changes.
